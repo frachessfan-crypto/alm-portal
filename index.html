@@ -1,0 +1,1504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ALM Volunteer Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#C8922A;--gold-l:#F7EDD8;--gold-d:#8B6318;
+  --cream:#FBF8F3;--ink:#1A1612;--ink2:#4A4540;--ink3:#8A837A;
+  --border:#E8E0D4;--white:#fff;
+  --green:#2D7A4F;--green-bg:#EBF5EF;
+  --red:#B91C1C;--red-bg:#FEE2E2;
+  --amber:#92650A;--amber-bg:#FEF3C7;
+  --blue:#1D4ED8;--blue-bg:#EFF6FF;
+  --purple:#6D28D9;--purple-bg:#EDE9FE;
+  --r:12px;--sh:0 2px 16px rgba(26,22,18,.09);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh;font-size:15px;line-height:1.5;}
+#auth-screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;}
+.auth-logo{font-family:'DM Serif Display',serif;font-size:26px;color:var(--gold-d);margin-bottom:2px;text-align:center;}
+.auth-sub{font-size:13px;color:var(--ink3);margin-bottom:24px;text-align:center;}
+#landing{width:100%;max-width:400px;}
+.landing-card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:22px 20px;margin-bottom:12px;box-shadow:var(--sh);cursor:pointer;display:flex;align-items:center;gap:16px;transition:.15s;}
+.landing-card:hover{border-color:var(--gold);box-shadow:0 4px 20px rgba(200,146,42,.15);}
+.landing-icon{width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;}
+.landing-icon.org{background:var(--gold-l);}
+.landing-icon.vol{background:var(--green-bg);}
+.landing-card-title{font-weight:600;font-size:15px;margin-bottom:2px;}
+.landing-card-sub{font-size:12px;color:var(--ink3);}
+.landing-arrow{margin-left:auto;color:var(--ink3);font-size:18px;}
+.auth-card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:24px 20px;width:100%;max-width:400px;box-shadow:var(--sh);}
+.auth-back{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--ink3);cursor:pointer;margin-bottom:16px;background:none;border:none;padding:0;}
+.auth-back:hover{color:var(--ink);}
+.auth-tabs{display:flex;background:var(--cream);border-radius:8px;padding:3px;margin-bottom:20px;}
+.auth-tab{flex:1;padding:8px;text-align:center;font-size:13px;font-weight:500;border:none;background:none;border-radius:6px;cursor:pointer;color:var(--ink3);transition:.15s;}
+.auth-tab.active{background:var(--white);color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.1);}
+.auth-title{font-size:17px;font-weight:600;margin-bottom:3px;}
+.auth-hint{font-size:12px;color:var(--ink3);margin-bottom:16px;}
+#forgot-screen{width:100%;max-width:400px;display:none;}
+.forgot-step{display:none;}
+.forgot-step.active{display:block;}
+.fg{margin-bottom:13px;}
+.fl{display:block;font-size:12px;font-weight:600;color:var(--ink2);margin-bottom:4px;letter-spacing:.03em;}
+.fi,.fs,.ft{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--ink);background:var(--cream);transition:border-color .15s;-webkit-appearance:none;appearance:none;}
+.fi:focus,.fs:focus,.ft:focus{outline:none;border-color:var(--gold);background:var(--white);}
+.ft{resize:vertical;min-height:68px;}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:11px 18px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;border:none;transition:.15s;width:100%;}
+.btn-p{background:var(--gold);color:#fff;}.btn-p:hover{background:var(--gold-d);}
+.btn-s{background:transparent;color:var(--ink2);border:1px solid var(--border);}.btn-s:hover{background:var(--cream);}
+.btn-g{background:var(--green);color:#fff;}.btn-g:hover{background:#205c3b;}
+.btn-r{background:var(--red-bg);color:var(--red);border:1px solid #fca5a5;}
+.btn-org{background:var(--gold-d);color:#fff;}.btn-org:hover{background:#6b4c10;}
+.btn-sm{padding:6px 11px;font-size:12px;border-radius:6px;width:auto;}
+.err{background:var(--red-bg);color:var(--red);padding:9px 12px;border-radius:8px;font-size:13px;margin-bottom:12px;display:none;}
+.err.show{display:block;}
+.suc{background:var(--green-bg);color:var(--green);padding:9px 12px;border-radius:8px;font-size:13px;margin-bottom:12px;display:none;}
+.suc.show{display:block;}
+#app-screen{display:none;flex-direction:column;min-height:100vh;}
+.app-header{background:var(--ink);color:#fff;padding:0 16px;display:flex;align-items:center;justify-content:space-between;height:54px;position:sticky;top:0;z-index:100;}
+.app-header-logo{font-family:'DM Serif Display',serif;font-size:17px;color:var(--gold-l);}
+.hdr-right{display:flex;align-items:center;gap:8px;}
+.hdr-user{font-size:11px;color:var(--ink3);text-align:right;}
+.hdr-user strong{color:#fff;display:block;font-size:13px;}
+.signout-btn{background:none;border:1px solid #444;color:var(--ink3);font-size:12px;cursor:pointer;padding:4px 10px;border-radius:6px;}
+.signout-btn:hover{color:#fff;border-color:#888;}
+.nav{display:flex;background:var(--white);border-bottom:1px solid var(--border);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.nav::-webkit-scrollbar{display:none;}
+.nav-btn{padding:11px 14px;font-size:13px;font-weight:500;color:var(--ink3);border:none;background:none;cursor:pointer;white-space:nowrap;border-bottom:2.5px solid transparent;transition:.15s;display:flex;align-items:center;gap:5px;flex-shrink:0;}
+.nav-btn svg{width:15px;height:15px;}
+.nav-btn.active{color:var(--gold-d);border-bottom-color:var(--gold);}
+.page{display:none;padding:16px;max-width:700px;margin:0 auto;}
+.page.active{display:block;}
+.sec{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:10px;margin-top:20px;}
+.sec:first-child{margin-top:0;}
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:10px;box-shadow:var(--sh);}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.stat{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:13px 15px;box-shadow:var(--sh);}
+.stat-v{font-family:'DM Serif Display',serif;font-size:28px;color:var(--gold-d);line-height:1;}
+.stat-l{font-size:11px;color:var(--ink3);margin-top:3px;font-weight:500;}
+.req-row{padding:11px 0;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:10px;}
+.req-row:last-child{border-bottom:none;}
+.avatar{width:36px;height:36px;border-radius:50%;background:var(--gold-l);color:var(--gold-d);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:12px;flex-shrink:0;}
+.req-name{font-size:14px;font-weight:500;}
+.req-meta{font-size:12px;color:var(--ink3);}
+.vol-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border);}
+.vol-row:last-child{border-bottom:none;}
+.vol-hrs{font-family:'DM Serif Display',serif;font-size:18px;color:var(--gold-d);white-space:nowrap;}
+.vol-hrs span{font-family:'DM Sans',sans-serif;font-size:11px;color:var(--ink3);}
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;}
+.badge-pend{background:var(--amber-bg);color:var(--amber);}
+.badge-app{background:var(--green-bg);color:var(--green);}
+.badge-rej{background:var(--red-bg);color:var(--red);}
+.badge-board{background:var(--blue-bg);color:var(--blue);}
+.badge-president{background:#1e1b4b;color:#c4b5fd;}
+.badge-vp{background:#312e81;color:#a5b4fc;}
+.badge-director{background:var(--purple-bg);color:var(--purple);}
+.badge-coordinator{background:#fdf4ff;color:#a21caf;}
+.badge-volunteer{background:var(--green-bg);color:var(--green);}
+.toast{position:fixed;bottom:76px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--ink);color:#fff;padding:10px 20px;border-radius:24px;font-size:13px;font-weight:500;opacity:0;transition:.25s;z-index:999;pointer-events:none;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.search-wrap{position:relative;margin-bottom:12px;}
+.search-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--ink3);}
+.search-wrap input{width:100%;padding:9px 12px 9px 32px;border:1px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;background:var(--white);}
+.search-wrap input:focus{outline:none;border-color:var(--gold);}
+.empty{text-align:center;padding:32px 16px;color:var(--ink3);}
+.empty-icon{font-size:30px;margin-bottom:8px;}
+.empty-t{font-size:14px;font-weight:500;color:var(--ink2);margin-bottom:3px;}
+.overlay{position:fixed;inset:0;background:rgba(26,22,18,.5);z-index:200;display:none;align-items:flex-end;justify-content:center;}
+.overlay.open{display:flex;}
+.modal{background:var(--white);border-radius:20px 20px 0 0;padding:18px 18px 28px;width:100%;max-width:700px;max-height:92vh;overflow-y:auto;}
+.modal-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px;}
+.modal-title{font-family:'DM Serif Display',serif;font-size:20px;margin-bottom:12px;}
+.settings-section{background:var(--white);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:10px;box-shadow:var(--sh);}
+.settings-row{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:.15s;}
+.settings-row:last-child{border-bottom:none;}
+.settings-row:hover{background:var(--cream);}
+.settings-row-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;margin-right:12px;flex-shrink:0;}
+.settings-row-label{font-size:14px;font-weight:500;}
+.settings-row-sub{font-size:12px;color:var(--ink3);}
+.settings-chevron{color:var(--ink3);font-size:18px;}
+.role-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
+.role-opt{border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;cursor:pointer;transition:.15s;background:var(--cream);}
+.role-opt:hover{border-color:var(--gold);}
+.role-opt.selected{border-color:var(--gold);background:var(--gold-l);}
+.role-opt-name{font-size:13px;font-weight:600;}
+.role-opt-desc{font-size:11px;color:var(--ink3);margin-top:2px;}
+.prog{background:var(--border);border-radius:4px;height:6px;overflow:hidden;margin-top:6px;}
+.prog-fill{height:100%;background:var(--gold);border-radius:4px;transition:width .4s;}
+.tbl{width:100%;border-collapse:collapse;font-size:13px;}
+.tbl th{background:var(--cream);padding:8px 10px;text-align:left;font-size:11px;font-weight:600;letter-spacing:.05em;color:var(--ink3);text-transform:uppercase;}
+.tbl td{padding:8px 10px;border-top:1px solid var(--border);}
+.tbl tr:hover td{background:var(--cream);}
+hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
+.entry-card{background:linear-gradient(135deg,var(--gold-d),#6b4c10);border-radius:14px;padding:20px;color:#fff;margin-bottom:12px;cursor:pointer;transition:.15s;display:flex;align-items:center;gap:16px;}
+.entry-card:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(139,99,24,.3);}
+.entry-card-icon{font-size:28px;}
+.entry-card-title{font-size:16px;font-weight:600;margin-bottom:2px;}
+.entry-card-sub{font-size:12px;opacity:.8;}
+/* Volunteer profile detail */
+.vol-detail-header{display:flex;align-items:center;gap:14px;margin-bottom:16px;}
+.vol-detail-avatar{width:56px;height:56px;border-radius:50%;background:var(--gold-l);color:var(--gold-d);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px;flex-shrink:0;}
+.detail-tabs{display:flex;background:var(--cream);border-radius:8px;padding:3px;margin-bottom:16px;}
+.detail-tab{flex:1;padding:8px;text-align:center;font-size:13px;font-weight:500;border:none;background:none;border-radius:6px;cursor:pointer;color:var(--ink3);transition:.15s;}
+.detail-tab.active{background:var(--white);color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.1);}
+.rej-box{background:var(--red-bg);border:1px solid #fca5a5;border-radius:10px;padding:12px 14px;margin-bottom:8px;}
+.rej-box:last-child{margin-bottom:0;}
+/* Wrong password shake + forgot hint */
+.shake{animation:shake .4s;}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.forgot-hint-inline{font-size:12px;color:var(--gold-d);cursor:pointer;margin-top:6px;display:none;text-align:right;}
+.forgot-hint-inline.show{display:block;}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:520px){
+  .nav{position:fixed;bottom:0;left:0;right:0;border-top:1px solid var(--border);border-bottom:none;z-index:100;justify-content:space-around;padding-bottom:env(safe-area-inset-bottom);}
+  .nav-btn{flex-direction:column;padding:6px 8px;font-size:10px;gap:2px;border-bottom:none;border-top:2.5px solid transparent;min-width:0;}
+  .nav-btn.active{border-top-color:var(--gold);border-bottom:none;}
+  .nav-btn svg{width:20px;height:20px;}
+  body{padding-bottom:64px;}
+  .fr{grid-template-columns:1fr;}
+  .role-grid{grid-template-columns:1fr;}
+  .stats{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- LANDING -->
+<div id="auth-screen">
+  <div class="auth-logo">🎨 Art Learning Mission</div>
+  <div class="auth-sub">Volunteer Hours Portal</div>
+
+  <div id="landing">
+    <div class="landing-card" onclick="showAuthFor('board')">
+      <div class="landing-icon org">🏛️</div>
+      <div>
+        <div class="landing-card-title">Organizer Dashboard</div>
+        <div class="landing-card-sub">Board members, presidents & coordinators</div>
+      </div>
+      <div class="landing-arrow">›</div>
+    </div>
+    <div class="landing-card" onclick="showAuthFor('volunteer')">
+      <div class="landing-icon vol">🙋</div>
+      <div>
+        <div class="landing-card-title">Volunteer Portal</div>
+        <div class="landing-card-sub">Log hours, track your progress</div>
+      </div>
+      <div class="landing-arrow">›</div>
+    </div>
+  </div>
+
+  <!-- AUTH FORM -->
+  <div id="auth-form-wrap" style="display:none;width:100%;max-width:400px;">
+    <div class="auth-card">
+      <button class="auth-back" onclick="backToLanding()">‹ Back</button>
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="switchAuth('signin')">Sign In</button>
+        <button class="auth-tab" id="signup-tab" onclick="switchAuth('signup')">Create Account</button>
+      </div>
+
+      <!-- SIGN IN -->
+      <div id="signin-form">
+        <div class="auth-title" id="signin-title">Welcome back</div>
+        <div class="auth-hint" id="signin-hint">Sign in to your account</div>
+        <div class="err" id="signin-err"></div>
+        <div class="fg"><label class="fl">Email</label><input class="fi" type="email" id="si-email" placeholder="you@gmail.com" autocomplete="email"/></div>
+        <div class="fg" style="position:relative;">
+          <label class="fl">Password</label>
+          <input class="fi" type="password" id="si-pass" placeholder="••••••••" autocomplete="current-password" style="padding-right:44px;"/>
+          <button onclick="togglePw('si-pass',this)" type="button" style="position:absolute;right:10px;bottom:10px;background:none;border:none;cursor:pointer;color:var(--ink3);font-size:13px;">Show</button>
+        </div>
+        <!-- volunteer-only phone field -->
+        <div class="fg" id="si-phone-wrap" style="display:none;">
+          <label class="fl">Phone Number <span style="color:var(--ink3);font-weight:400;">(optional)</span></label>
+          <input class="fi" type="tel" id="si-phone" placeholder="(555) 000-0000" autocomplete="tel"/>
+        </div>
+        <div style="text-align:right;margin-bottom:12px;">
+          <a href="#" onclick="showForgot();return false;" style="font-size:12px;color:var(--gold-d);">Forgot password?</a>
+        </div>
+        <button class="btn btn-p" onclick="doSignIn()">Sign In</button>
+        <div id="signup-link-wrap" style="text-align:center;font-size:12px;color:var(--ink3);margin-top:12px;">No account? <a href="#" onclick="switchAuth('signup');return false;" style="color:var(--gold-d);">Create one</a></div>
+      </div>
+
+      <!-- SIGN UP -->
+      <div id="signup-form" style="display:none;">
+        <div class="auth-title">Create account</div>
+        <div class="auth-hint" id="signup-hint">Join the ALM volunteer team</div>
+        <div class="err" id="signup-err"></div>
+        <div class="fr">
+          <div class="fg"><label class="fl">First Name</label><input class="fi" type="text" id="su-first" placeholder="Maria"/></div>
+          <div class="fg"><label class="fl">Last Name</label><input class="fi" type="text" id="su-last" placeholder="Gonzalez"/></div>
+        </div>
+        <div class="fg"><label class="fl">Email</label><input class="fi" type="email" id="su-email" placeholder="you@gmail.com"/></div>
+        <div class="fg"><label class="fl">Phone Number <span style="color:var(--ink3);font-weight:400;">(optional)</span></label><input class="fi" type="tel" id="su-phone" placeholder="(555) 000-0000"/></div>
+        <div class="fg" style="position:relative;">
+          <label class="fl">Password</label>
+          <input class="fi" type="password" id="su-pass" placeholder="Min. 6 characters" style="padding-right:44px;"/>
+          <button onclick="togglePw('su-pass',this)" type="button" style="position:absolute;right:10px;bottom:10px;background:none;border:none;cursor:pointer;color:var(--ink3);font-size:13px;">Show</button>
+        </div>
+        <div class="fg"><label class="fl">Confirm Password</label><input class="fi" type="password" id="su-pass2" placeholder="Repeat password"/></div>
+        <button class="btn btn-p" onclick="doSignUp()">Create Account</button>
+        <div style="text-align:center;font-size:12px;color:var(--ink3);margin-top:12px;">Have an account? <a href="#" onclick="switchAuth('signin');return false;" style="color:var(--gold-d);">Sign in</a></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FORGOT PASSWORD -->
+  <div id="forgot-screen">
+    <div class="auth-card">
+      <button class="auth-back" onclick="hideForgot()">‹ Back to sign in</button>
+      <div class="forgot-step active" id="forgot-s1">
+        <div class="auth-title">Reset password</div>
+        <div class="auth-hint">Enter your email and we'll generate a reset code.</div>
+        <div class="err" id="forgot-err1"></div>
+        <div class="fg"><label class="fl">Email</label><input class="fi" type="email" id="fp-email" placeholder="you@gmail.com"/></div>
+        <button class="btn btn-p" onclick="forgotStep1()">Send Reset Code</button>
+        <div style="background:var(--blue-bg);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--blue);margin-top:12px;">💡 A code will appear in a popup (on a live server it would go to your email).</div>
+      </div>
+      <div class="forgot-step" id="forgot-s2">
+        <div class="auth-title">Enter code</div>
+        <div class="auth-hint" id="forgot-hint2">Check your email for a 6-digit code.</div>
+        <div class="err" id="forgot-err2"></div>
+        <div class="fg"><label class="fl">6-Digit Code</label><input class="fi" type="text" id="fp-code" placeholder="123456" maxlength="6" style="letter-spacing:.3em;font-size:20px;text-align:center;"/></div>
+        <button class="btn btn-p" onclick="forgotStep2()">Verify Code</button>
+        <button class="btn btn-s" style="margin-top:8px;" onclick="forgotStep1Again()">Resend Code</button>
+      </div>
+      <div class="forgot-step" id="forgot-s3">
+        <div class="auth-title">New password</div>
+        <div class="auth-hint">Choose a strong password.</div>
+        <div class="err" id="forgot-err3"></div>
+        <div class="fg" style="position:relative;">
+          <label class="fl">New Password</label>
+          <input class="fi" type="password" id="fp-newpass" placeholder="Min. 6 characters" style="padding-right:44px;"/>
+          <button onclick="togglePw('fp-newpass',this)" type="button" style="position:absolute;right:10px;bottom:10px;background:none;border:none;cursor:pointer;color:var(--ink3);font-size:13px;">Show</button>
+        </div>
+        <div class="fg"><label class="fl">Confirm Password</label><input class="fi" type="password" id="fp-newpass2" placeholder="Repeat password"/></div>
+        <button class="btn btn-p" onclick="forgotStep3()">Set New Password</button>
+      </div>
+      <div class="forgot-step" id="forgot-s4">
+        <div style="text-align:center;padding:20px 0;">
+          <div style="font-size:40px;margin-bottom:12px;">✅</div>
+          <div class="auth-title" style="margin-bottom:6px;">Password updated!</div>
+          <div style="font-size:13px;color:var(--ink3);margin-bottom:20px;">You can now sign in with your new password.</div>
+          <button class="btn btn-p" onclick="hideForgot()">Back to Sign In</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app-screen">
+  <header class="app-header">
+    <div class="app-header-logo">ALM Portal</div>
+    <div class="hdr-right">
+      <div class="hdr-user"><strong id="hdr-name">—</strong><span id="hdr-role">—</span></div>
+      <button class="signout-btn" onclick="doSignOut()">Sign out</button>
+    </div>
+  </header>
+  <nav class="nav" id="main-nav"></nav>
+  <div id="pages-container"></div>
+</div>
+
+<!-- MODALS -->
+<!-- Add Volunteer -->
+<div class="overlay" id="addvol-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Add Member Account</div>
+    <div class="fr">
+      <div class="fg"><label class="fl">First Name *</label><input class="fi" type="text" id="av-first"/></div>
+      <div class="fg"><label class="fl">Last Name *</label><input class="fi" type="text" id="av-last"/></div>
+    </div>
+    <div class="fg"><label class="fl">Email *</label><input class="fi" type="email" id="av-email"/></div>
+    <div class="fg"><label class="fl">Phone Number</label><input class="fi" type="tel" id="av-phone" placeholder="(555) 000-0000"/></div>
+    <div class="fg"><label class="fl">Temporary Password *</label><input class="fi" type="text" id="av-pass" placeholder="They can change this later"/></div>
+    <div class="fg"><label class="fl">Notes / Skills</label><input class="fi" type="text" id="av-notes" placeholder="e.g. Art Instructor"/></div>
+    <label class="fl" style="margin-bottom:8px;">Role</label>
+    <div class="role-grid" id="av-role-grid">
+      <div class="role-opt selected" data-role="volunteer" onclick="selectRole(this)"><div class="role-opt-name">🙋 Volunteer</div><div class="role-opt-desc">Can log & request hours</div></div>
+      <div class="role-opt" data-role="coordinator" onclick="selectRole(this)"><div class="role-opt-name">📋 Coordinator</div><div class="role-opt-desc">Can approve hours</div></div>
+      <div class="role-opt" data-role="director" onclick="selectRole(this)"><div class="role-opt-name">🎯 Director</div><div class="role-opt-desc">Can approve + manage</div></div>
+      <div class="role-opt" data-role="vp" onclick="selectRole(this)"><div class="role-opt-name">⭐ Vice President</div><div class="role-opt-desc">Full board access</div></div>
+      <div class="role-opt" data-role="president" onclick="selectRole(this)"><div class="role-opt-name">👑 President</div><div class="role-opt-desc">Full board access</div></div>
+    </div>
+    <button class="btn btn-p" style="margin-top:14px;margin-bottom:8px;" onclick="saveNewVolunteer()">Create Account</button>
+    <button class="btn btn-s" onclick="closeModal('addvol-modal')">Cancel</button>
+  </div>
+</div>
+
+<!-- Manual Log -->
+<div class="overlay" id="manlog-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Manually Add Hours</div>
+    <div class="fg"><label class="fl">Volunteer *</label><select class="fs" id="ml-vol"></select></div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Date *</label><input class="fi" type="date" id="ml-date"/></div>
+      <div class="fg"><label class="fl">Hours *</label><input class="fi" type="number" id="ml-hours" min=".5" max="24" step=".5"/></div>
+    </div>
+    <div class="fg"><label class="fl">Activity</label><input class="fi" type="text" id="ml-activity"/></div>
+    <div class="fg"><label class="fl">Notes</label><textarea class="ft" id="ml-notes"></textarea></div>
+    <button class="btn btn-p" style="margin-bottom:8px;" onclick="saveManualLog()">Add Hours</button>
+    <button class="btn btn-s" onclick="closeModal('manlog-modal')">Cancel</button>
+  </div>
+</div>
+
+<!-- Promote Modal -->
+<div class="overlay" id="promote-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="promote-title">Change Role</div>
+    <div style="font-size:13px;color:var(--ink3);margin-bottom:14px;" id="promote-sub"></div>
+    <div class="role-grid" id="promote-role-grid">
+      <div class="role-opt" data-role="volunteer" onclick="selectPromoteRole(this)"><div class="role-opt-name">🙋 Volunteer</div><div class="role-opt-desc">Can log & request hours</div></div>
+      <div class="role-opt" data-role="coordinator" onclick="selectPromoteRole(this)"><div class="role-opt-name">📋 Coordinator</div><div class="role-opt-desc">Can approve hours</div></div>
+      <div class="role-opt" data-role="director" onclick="selectPromoteRole(this)"><div class="role-opt-name">🎯 Director</div><div class="role-opt-desc">Can approve + manage</div></div>
+      <div class="role-opt" data-role="vp" onclick="selectPromoteRole(this)"><div class="role-opt-name">⭐ Vice President</div><div class="role-opt-desc">Full board access</div></div>
+      <div class="role-opt" data-role="president" onclick="selectPromoteRole(this)"><div class="role-opt-name">👑 President</div><div class="role-opt-desc">Full board access</div></div>
+    </div>
+    <button class="btn btn-p" style="margin-top:14px;margin-bottom:8px;" onclick="savePromotion()">Save Role</button>
+    <button class="btn btn-s" onclick="closeModal('promote-modal')">Cancel</button>
+  </div>
+</div>
+
+<!-- Settings Modal (change email/password) -->
+<div class="overlay" id="settings-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Account Settings</div>
+
+    <!-- Change Email -->
+    <div id="set-email-section" style="margin-bottom:16px;">
+      <div style="font-size:13px;font-weight:600;margin-bottom:8px;">📧 Change Email</div>
+      <div class="err" id="set-email-err"></div>
+      <div class="suc" id="set-email-suc"></div>
+      <div class="fg"><label class="fl">New Email</label><input class="fi" type="email" id="set-email" placeholder="new@gmail.com"/></div>
+      <div class="fg" style="position:relative;">
+        <label class="fl">Current Password (to confirm)</label>
+        <input class="fi" type="password" id="set-email-pass" oninput="resetWrongPassHint('email')"/>
+        <div class="forgot-hint-inline" id="set-email-forgot" onclick="goForgotFromSettings()">Forgot password? Reset it →</div>
+      </div>
+      <button class="btn btn-p btn-sm" style="width:auto;" onclick="changeEmail()">Update Email</button>
+    </div>
+    <hr>
+
+    <!-- Change Password -->
+    <div style="margin-bottom:8px;">
+      <div style="font-size:13px;font-weight:600;margin-bottom:8px;">🔒 Change Password</div>
+      <div class="err" id="set-pass-err"></div>
+      <div class="suc" id="set-pass-suc"></div>
+      <div class="fg" style="position:relative;">
+        <label class="fl">Current Password</label>
+        <input class="fi" type="password" id="set-cur-pass" oninput="resetWrongPassHint('pass')"/>
+        <div class="forgot-hint-inline" id="set-pass-forgot" onclick="goForgotFromSettings()">Forgot password? Reset it →</div>
+      </div>
+      <div class="fg" style="position:relative;">
+        <label class="fl">New Password</label>
+        <input class="fi" type="password" id="set-new-pass" placeholder="Min. 6 characters" style="padding-right:44px;"/>
+        <button onclick="togglePw('set-new-pass',this)" type="button" style="position:absolute;right:10px;bottom:10px;background:none;border:none;cursor:pointer;color:var(--ink3);font-size:13px;">Show</button>
+      </div>
+      <div class="fg"><label class="fl">Confirm New Password</label><input class="fi" type="password" id="set-new-pass2"/></div>
+      <button class="btn btn-p btn-sm" style="width:auto;" onclick="changePassword()">Update Password</button>
+    </div>
+    <hr>
+    <!-- Contact support -->
+    <div style="background:var(--blue-bg);border-radius:10px;padding:12px 14px;font-size:13px;color:var(--blue);margin-bottom:12px;">
+      📞 Need help? Call or text us: <a href="tel:+15550000000" style="color:var(--blue);font-weight:600;">(555) 000-0000</a>
+    </div>
+    <button class="btn btn-s" onclick="closeModal('settings-modal')">Close</button>
+  </div>
+</div>
+
+<!-- Volunteer Profile Modal -->
+<div class="overlay" id="vol-profile-modal">
+  <div class="modal" style="max-height:90vh;overflow-y:auto;">
+    <div class="modal-handle"></div>
+    <div class="vol-detail-header">
+      <div class="vol-detail-avatar" id="vpm-avatar"></div>
+      <div>
+        <div style="font-weight:700;font-size:17px;" id="vpm-name"></div>
+        <div style="font-size:12px;color:var(--ink3);" id="vpm-email"></div>
+        <div id="vpm-badge" style="margin-top:4px;"></div>
+      </div>
+    </div>
+    <div class="stats" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:12px;">
+      <div class="stat"><div class="stat-v" id="vpm-hrs">0</div><div class="stat-l">Approved Hrs</div></div>
+      <div class="stat"><div class="stat-v" id="vpm-sess">0</div><div class="stat-l">Sessions</div></div>
+      <div class="stat"><div class="stat-v" id="vpm-rej">0</div><div class="stat-l">Rejections</div></div>
+    </div>
+    <div class="detail-tabs">
+      <button class="detail-tab active" onclick="switchVolTab('approved',this)">✅ Approved</button>
+      <button class="detail-tab" onclick="switchVolTab('rejections',this)">❌ Rejections</button>
+    </div>
+    <div id="vpm-approved-tab"></div>
+    <div id="vpm-rejections-tab" style="display:none;"></div>
+    <button class="btn btn-s" style="margin-top:12px;" onclick="closeModal('vol-profile-modal')">Close</button>
+  </div>
+</div>
+
+<!-- Volunteer of the Month Modal (organizer sets quote) -->
+<div class="overlay" id="votm-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🏆 Volunteer of the Month</div>
+    <div id="votm-winner-info" style="margin-bottom:14px;"></div>
+    <div class="fg">
+      <label class="fl">Quote / Message <span style="color:var(--ink3);font-weight:400;">(max 500 chars)</span></label>
+      <textarea class="ft" id="votm-quote-input" maxlength="500" placeholder="Write an inspiring message for this volunteer…" style="min-height:90px;" oninput="votmCharCount(this)"></textarea>
+      <div style="font-size:11px;color:var(--ink3);text-align:right;margin-top:3px;"><span id="votm-char-ct">0</span>/500</div>
+    </div>
+    <div class="err" id="votm-err"></div>
+    <button class="btn btn-p" style="margin-bottom:8px;" onclick="saveVotmQuote()">Save Quote</button>
+    <button class="btn btn-s" onclick="closeModal('votm-modal')">Cancel</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<div id="loading-screen" style="position:fixed;inset:0;background:rgba(251,248,243,.97);z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;">
+  <div style="font-family:'DM Serif Display',serif;font-size:22px;color:var(--gold-d);">🎨 ALM Portal</div>
+  <div id="loading-msg" style="font-size:13px;color:var(--ink3);">Connecting…</div>
+  <div style="width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;"></div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, doc, setDoc, getDocs, onSnapshot, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAf0Mrh_pEJ-12s_5q0xFBnnJns70ZQ1qc",
+  authDomain: "art-learning-mission.firebaseapp.com",
+  projectId: "art-learning-mission",
+  storageBucket: "art-learning-mission.firebasestorage.app",
+  messagingSenderId: "141919156843",
+  appId: "1:141919156843:web:00b2a690b9bea5f00e0f2e"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const BOARD_ROLES=['president','vp','director','coordinator','board'];
+const ROLE_LABELS={president:'President',vp:'Vice President',director:'Director',coordinator:'Coordinator',volunteer:'Volunteer',board:'Board Member'};
+const ROLE_BADGES={president:'badge-president',vp:'badge-vp',director:'badge-director',coordinator:'badge-coordinator',volunteer:'badge-volunteer',board:'badge-board'};
+
+let users=[], requests=[], currentUser=null, pendingAuthType='volunteer';
+let forgotCode='', forgotUserId='', promoteUserId='', promoteSelectedRole='volunteer';
+let unsubUsers=null, unsubRequests=null;
+let wrongPassTimer=null;
+
+// ── HELPERS ──
+const ts=()=>new Date().toISOString();
+const uid=()=>'r_'+Date.now().toString(36)+Math.random().toString(36).slice(2);
+const initials=u=>((u.firstName||'?')[0]+(u.lastName||'?')[0]).toUpperCase();
+const fullName=u=>u.firstName+' '+u.lastName;
+const fmtDate=s=>new Date(s+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+const isBoard=u=>BOARD_ROLES.includes(u.role);
+const emptyHTML=(icon,msg)=>`<div class="empty"><div class="empty-icon">${icon}</div><div class="empty-t">${msg}</div></div>`;
+const roleBadge=role=>`<span class="badge ${ROLE_BADGES[role]||'badge-volunteer'}">${ROLE_LABELS[role]||role}</span>`;
+function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function openModal(id){document.getElementById(id).classList.add('open');}
+function togglePw(id,btn){const i=document.getElementById(id);i.type=i.type==='password'?'text':'password';btn.textContent=i.type==='password'?'Show':'Hide';}
+function showLoading(msg){document.getElementById('loading-screen').style.display='flex';document.getElementById('loading-msg').textContent=msg||'Loading…';}
+function hideLoading(){document.getElementById('loading-screen').style.display='none';}
+
+// ── EXPOSE TO GLOBAL ──
+Object.assign(window,{showAuthFor,backToLanding,switchAuth,doSignIn,doSignUp,doSignOut,showForgot,hideForgot,forgotStep1,forgotStep1Again,forgotStep2,forgotStep3,showPage,approveReq,rejectReq,deleteEntry,openManualLog,saveManualLog,openAddVol,selectRole,saveNewVolunteer,openPromote,selectPromoteRole,savePromotion,filterTeam,exportCSV,updateGoal,changeEmail,changePassword,clearAll,submitVolReq,togglePw,openModal,closeModal,deleteUser,resetWrongPassHint,goForgotFromSettings,openVolProfile,switchVolTab,openVotmModal,saveVotmQuote,votmCharCount});
+
+// ── FIRESTORE OPS ──
+const saveUser=u=>setDoc(doc(db,'users',u.id),u);
+const saveRequest=r=>setDoc(doc(db,'requests',r.id),r);
+const updateRequest=(id,data)=>updateDoc(doc(db,'requests',id),data);
+const removeRequest=id=>deleteDoc(doc(db,'requests',id));
+const updateUser=(id,data)=>updateDoc(doc(db,'users',id),data);
+const removeUser=id=>deleteDoc(doc(db,'users',id));
+
+// ── SEED ──
+async function seedIfEmpty(){
+  const snap=await getDocs(collection(db,'users'));
+  if(!snap.empty){
+    if(!snap.docs.some(d=>d.data().email==='iamtoosmartright@gmail.com'))
+      await saveUser({id:'u_owner',email:'iamtoosmartright@gmail.com',password:'123456',firstName:'You',lastName:'(Owner)',role:'president',phone:'',notes:'App Owner',createdAt:ts()});
+    return;
+  }
+  const su=[
+    {id:'u_owner',email:'iamtoosmartright@gmail.com',password:'123456',firstName:'You',lastName:'(Owner)',role:'president',phone:'',notes:'App Owner',createdAt:ts()},
+    {id:'u_admin',email:'admin@alm.org',password:'admin123',firstName:'Alex',lastName:'Rivera',role:'president',phone:'',notes:'',createdAt:ts()},
+    {id:'u_maria',email:'maria@alm.org',password:'vol123',firstName:'Maria',lastName:'Gonzalez',role:'volunteer',phone:'',notes:'Art Instructor',createdAt:ts()},
+    {id:'u_james',email:'james@alm.org',password:'vol123',firstName:'James',lastName:'Park',role:'volunteer',phone:'',notes:'Setup Crew',createdAt:ts()},
+  ];
+  for(const u of su) await saveUser(u);
+  const ago=n=>{const d=new Date();d.setDate(d.getDate()-n);return d.toISOString().split('T')[0];};
+  const sr=[
+    {id:'r1',userId:'u_maria',userName:'Maria Gonzalez',date:ago(1),hours:4,activity:'Saturday Art Class',notes:'',status:'pending',submittedAt:ts()},
+    {id:'r2',userId:'u_james',userName:'James Park',date:ago(3),hours:3,activity:'Gallery Setup',notes:'Moved furniture',status:'approved',submittedAt:ts(),reviewedBy:'Alex Rivera',reviewedAt:ts()},
+    {id:'r3',userId:'u_maria',userName:'Maria Gonzalez',date:ago(5),hours:5,activity:'Youth Workshop',notes:'',status:'approved',submittedAt:ts(),reviewedBy:'Alex Rivera',reviewedAt:ts()},
+    {id:'r4',userId:'u_james',userName:'James Park',date:ago(7),hours:2,activity:'Mural Project',notes:'',status:'rejected',submittedAt:ts(),reviewedBy:'Alex Rivera',reviewedAt:ts(),rejectReason:'Duplicate entry'},
+  ];
+  for(const r of sr) await saveRequest(r);
+}
+
+// ── REAL-TIME LISTENERS ──
+function startListeners(){
+  if(unsubUsers) unsubUsers();
+  if(unsubRequests) unsubRequests();
+  unsubUsers=onSnapshot(collection(db,'users'),snap=>{
+    users=snap.docs.map(d=>d.data());
+    if(currentUser){const u=users.find(u=>u.id===currentUser.id);if(u)currentUser=u;renderCurrentPage();}
+  });
+  unsubRequests=onSnapshot(collection(db,'requests'),snap=>{
+    requests=snap.docs.map(d=>d.data());
+    if(currentUser) renderCurrentPage();
+  });
+}
+
+// ── INIT ──
+async function init(){
+  showLoading('Connecting…');
+  // Auto-login
+  const saved=localStorage.getItem('alm_session');
+  await seedIfEmpty();
+  const [uSnap,rSnap]=await Promise.all([getDocs(collection(db,'users')),getDocs(collection(db,'requests'))]);
+  users=uSnap.docs.map(d=>d.data());
+  requests=rSnap.docs.map(d=>d.data());
+  hideLoading();
+  if(saved){
+    const u=users.find(u=>u.id===saved);
+    if(u){currentUser=u;startListeners();launchApp();return;}
+  }
+}
+init();
+
+// ── AUTH ──
+function showAuthFor(type){
+  pendingAuthType=type;
+  document.getElementById('landing').style.display='none';
+  document.getElementById('auth-form-wrap').style.display='block';
+  document.getElementById('forgot-screen').style.display='none';
+  const isOrg=type==='board';
+  document.getElementById('signin-title').textContent=isOrg?'Organizer sign in':'Volunteer sign in';
+  document.getElementById('signin-hint').textContent=isOrg?'Sign in to manage volunteers':'Sign in to track your hours';
+  document.getElementById('signup-hint').textContent=isOrg?'Create an organizer account':'Join the ALM volunteer team';
+  document.getElementById('signup-tab').style.display=isOrg?'none':'';
+  document.getElementById('signup-link-wrap').style.display=isOrg?'none':'';
+  // Show phone field only for volunteers
+  document.getElementById('si-phone-wrap').style.display=isOrg?'none':'block';
+  switchAuth('signin');
+}
+function backToLanding(){document.getElementById('landing').style.display='block';document.getElementById('auth-form-wrap').style.display='none';document.getElementById('forgot-screen').style.display='none';}
+function switchAuth(tab){
+  document.querySelectorAll('.auth-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.auth-tab')[tab==='signin'?0:1].classList.add('active');
+  document.getElementById('signin-form').style.display=tab==='signin'?'block':'none';
+  document.getElementById('signup-form').style.display=tab==='signup'?'block':'none';
+}
+
+function doSignIn(){
+  const email=document.getElementById('si-email').value.trim().toLowerCase();
+  const pass=document.getElementById('si-pass').value;
+  const err=document.getElementById('signin-err');
+  const u=users.find(u=>u.email.toLowerCase()===email&&u.password===pass);
+  if(!u){err.textContent='Incorrect email or password.';err.classList.add('show');return;}
+  if(pendingAuthType==='board'&&!isBoard(u)){err.textContent='This account does not have organizer access.';err.classList.add('show');return;}
+  if(pendingAuthType==='volunteer'&&isBoard(u)){err.textContent='Please use the Organizer Dashboard to sign in.';err.classList.add('show');return;}
+  // Save phone if entered
+  const phone=document.getElementById('si-phone')?.value.trim();
+  if(phone&&phone!==u.phone) updateUser(u.id,{phone});
+  err.classList.remove('show');
+  currentUser=u;
+  localStorage.setItem('alm_session',u.id); // remember login
+  startListeners();
+  launchApp();
+}
+
+async function doSignUp(){
+  const first=document.getElementById('su-first').value.trim();
+  const last=document.getElementById('su-last').value.trim();
+  const email=document.getElementById('su-email').value.trim().toLowerCase();
+  const phone=document.getElementById('su-phone').value.trim();
+  const pass=document.getElementById('su-pass').value;
+  const pass2=document.getElementById('su-pass2').value;
+  const err=document.getElementById('signup-err');
+  if(!first||!last){err.textContent='Please enter your full name.';err.classList.add('show');return;}
+  if(!email){err.textContent='Please enter your email.';err.classList.add('show');return;}
+  if(users.find(u=>u.email.toLowerCase()===email)){err.textContent='An account with that email already exists.';err.classList.add('show');return;}
+  if(pass.length<6){err.textContent='Password must be at least 6 characters.';err.classList.add('show');return;}
+  if(pass!==pass2){err.textContent='Passwords do not match.';err.classList.add('show');return;}
+  if(pendingAuthType==='board'){err.textContent='Organizer accounts must be created by an existing organizer.';err.classList.add('show');return;}
+  showLoading('Creating account…');
+  const nu={id:'u_'+uid(),email,password:pass,firstName:first,lastName:last,role:'volunteer',phone:phone||'',notes:'',createdAt:ts()};
+  await saveUser(nu);
+  users.push(nu);
+  currentUser=nu;
+  localStorage.setItem('alm_session',nu.id);
+  hideLoading();
+  startListeners();
+  launchApp();
+}
+
+function doSignOut(){
+  localStorage.removeItem('alm_session');
+  if(unsubUsers){unsubUsers();unsubUsers=null;}
+  if(unsubRequests){unsubRequests();unsubRequests=null;}
+  currentUser=null;
+  document.getElementById('app-screen').style.display='none';
+  document.getElementById('auth-screen').style.display='flex';
+  document.getElementById('si-email').value='';
+  document.getElementById('si-pass').value='';
+  document.getElementById('signin-err').classList.remove('show');
+  backToLanding();
+}
+
+// ── FORGOT PASSWORD ──
+function showForgot(){
+  document.getElementById('auth-form-wrap').style.display='none';
+  document.getElementById('forgot-screen').style.display='block';
+  document.getElementById('fp-email').value=document.getElementById('si-email').value;
+  showForgotStep(1);
+}
+function hideForgot(){document.getElementById('forgot-screen').style.display='none';document.getElementById('auth-form-wrap').style.display='block';switchAuth('signin');}
+function showForgotStep(n){document.querySelectorAll('.forgot-step').forEach(s=>s.classList.remove('active'));document.getElementById('forgot-s'+n).classList.add('active');}
+function forgotStep1(){
+  const email=document.getElementById('fp-email').value.trim().toLowerCase();
+  const err=document.getElementById('forgot-err1');
+  const u=users.find(u=>u.email.toLowerCase()===email);
+  if(!u){err.textContent='No account found with that email.';err.classList.add('show');return;}
+  err.classList.remove('show');
+  forgotCode=String(Math.floor(100000+Math.random()*900000));
+  forgotUserId=u.id;
+  alert('Your reset code is: '+forgotCode+'\n\n(On a live server this would be emailed to you.)');
+  document.getElementById('forgot-hint2').textContent='Enter the 6-digit code sent to '+email;
+  showForgotStep(2);
+}
+function forgotStep1Again(){showForgotStep(1);document.getElementById('forgot-err1').classList.remove('show');}
+function forgotStep2(){
+  const code=document.getElementById('fp-code').value.trim();
+  const err=document.getElementById('forgot-err2');
+  if(code!==forgotCode){err.textContent='Incorrect code.';err.classList.add('show');return;}
+  err.classList.remove('show');showForgotStep(3);
+}
+async function forgotStep3(){
+  const p1=document.getElementById('fp-newpass').value;
+  const p2=document.getElementById('fp-newpass2').value;
+  const err=document.getElementById('forgot-err3');
+  if(p1.length<6){err.textContent='Password must be at least 6 characters.';err.classList.add('show');return;}
+  if(p1!==p2){err.textContent='Passwords do not match.';err.classList.add('show');return;}
+  err.classList.remove('show');
+  await updateUser(forgotUserId,{password:p1});
+  showForgotStep(4);
+}
+
+// ── LAUNCH ──
+function launchApp(){
+  document.getElementById('auth-screen').style.display='none';
+  document.getElementById('app-screen').style.display='flex';
+  document.getElementById('hdr-name').textContent=fullName(currentUser);
+  document.getElementById('hdr-role').textContent=ROLE_LABELS[currentUser.role]||'Volunteer';
+  buildNav();renderCurrentPage();
+}
+function buildNav(){
+  const nav=document.getElementById('main-nav');
+  const board=isBoard(currentUser);
+  const tabs=board?[
+    {id:'dash',label:'Dashboard',icon:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/>'},
+    {id:'pending',label:'Approvals',icon:'<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>'},
+    {id:'team',label:'Team',icon:'<circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M19 7v6M22 10h-6"/>'},
+    {id:'allhours',label:'All Hours',icon:'<circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/>'},
+    {id:'reports',label:'Reports',icon:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>'},
+    {id:'bsettings',label:'Settings',icon:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>'},
+  ]:[
+    {id:'vol-home',label:'Home',icon:'<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>'},
+    {id:'vol-request',label:'Request Hours',icon:'<path d="M12 5v14M5 12h14"/>'},
+    {id:'vol-history',label:'My Hours',icon:'<circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/>'},
+    {id:'vsettings',label:'Settings',icon:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>'},
+  ];
+  nav.innerHTML=tabs.map((t,i)=>`<button class="nav-btn${i===0?' active':''}" id="nav-${t.id}" onclick="showPage('${t.id}',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${t.icon}</svg>${t.label}</button>`).join('');
+  document.getElementById('pages-container').innerHTML=tabs.map((t,i)=>`<div class="page${i===0?' active':''}" id="page-${t.id}"></div>`).join('');
+}
+function showPage(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if(btn)btn.classList.add('active');
+  renderPage(id);
+}
+function renderCurrentPage(){const a=document.querySelector('.page.active');if(a)renderPage(a.id.replace('page-',''));}
+function renderPage(id){({dash:renderDash,pending:renderPending,team:renderTeam,allhours:renderAllHours,reports:renderReports,bsettings:renderBSettings,'vol-home':renderVolHome,'vol-request':renderVolRequest,'vol-history':renderVolHistory,vsettings:renderVSettings})[id]?.();}
+
+// ── PROFANITY FILTER ──
+const BAD_WORDS=['fuck','shit','ass','bitch','cunt','dick','pussy','cock','bastard','damn','hell','crap','piss','nigger','nigga','faggot','retard','slut','whore','rape','kill','hate','stupid','idiot'];
+function hasProfanity(text){
+  const lower=text.toLowerCase().replace(/[^a-z0-9\s]/g,'');
+  return BAD_WORDS.some(w=>lower.split(/\s+/).includes(w)||lower.includes(w));
+}
+
+// ── VOLUNTEER OF THE MONTH ──
+function getMonthKey(){const n=new Date();return n.getFullYear()+'-'+(n.getMonth()+1);}
+function getVotm(){
+  const key='alm_votm_'+getMonthKey();
+  try{return JSON.parse(localStorage.getItem(key))||null;}catch{return null;}
+}
+function setVotm(data){localStorage.setItem('alm_votm_'+getMonthKey(),JSON.stringify(data));}
+
+function computeVotmWinner(){
+  const now=new Date();
+  const monthStr=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+  const vols=users.filter(u=>!isBoard(u));
+  if(!vols.length)return null;
+  let best=null,bestHrs=0;
+  vols.forEach(u=>{
+    const hrs=requests.filter(r=>r.userId===u.id&&r.status==='approved'&&r.date.startsWith(monthStr)).reduce((s,r)=>s+r.hours,0);
+    if(hrs>bestHrs){bestHrs=hrs;best=u;}
+  });
+  return best;
+}
+
+function votmCard(forVolunteer=false){
+  const saved=getVotm();
+  const winner=computeVotmWinner();
+  // If no winner yet
+  if(!winner)return`<div class="card" style="text-align:center;padding:20px;">${emptyHTML('🏆','No volunteer hours logged this month yet')}</div>`;
+  // If saved and still same winner
+  const display= saved&&saved.userId===winner.id ? saved : {userId:winner.id,name:fullName(winner),quote:'',month:getMonthKey()};
+  const monthName=new Date().toLocaleString('en-US',{month:'long',year:'numeric'});
+  return`<div style="background:linear-gradient(135deg,#1e1b4b,#312e81);border-radius:14px;padding:20px;color:#fff;margin-bottom:4px;">
+    <div style="font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#c4b5fd;margin-bottom:10px;">🏆 Volunteer of the Month · ${monthName}</div>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+      <div style="width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;">${initials(winner)}</div>
+      <div>
+        <div style="font-size:18px;font-weight:700;">${fullName(winner)}</div>
+        <div style="font-size:12px;color:#c4b5fd;">${requests.filter(r=>r.userId===winner.id&&r.status==='approved'&&r.date.startsWith(new Date().toISOString().slice(0,7))).reduce((s,r)=>s+r.hours,0)} hrs this month</div>
+      </div>
+    </div>
+    ${display.quote?`<div style="font-style:italic;font-size:13px;color:#e0e7ff;border-left:3px solid #818cf8;padding-left:10px;line-height:1.5;">"${display.quote}"</div>`:'<div style="font-size:12px;color:#a5b4fc;">No quote yet${!forVolunteer?' — tap Edit to add one.':''}</div>'}
+    ${!forVolunteer?`<button class="btn btn-sm" onclick="openVotmModal()" style="margin-top:12px;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);">✏️ Edit Quote</button>`:''}
+  </div>`;
+}
+
+function openVotmModal(){
+  const winner=computeVotmWinner();
+  if(!winner){alert('No volunteer hours logged this month yet.');return;}
+  const saved=getVotm();
+  document.getElementById('votm-winner-info').innerHTML=`<div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--cream);border-radius:8px;">
+    <div class="avatar">${initials(winner)}</div>
+    <div><div style="font-weight:600;">${fullName(winner)}</div><div style="font-size:12px;color:var(--ink3);">This month's top volunteer</div></div>
+  </div>`;
+  const inp=document.getElementById('votm-quote-input');
+  inp.value=saved&&saved.userId===winner.id?saved.quote:'';
+  document.getElementById('votm-char-ct').textContent=inp.value.length;
+  document.getElementById('votm-err').classList.remove('show');
+  openModal('votm-modal');
+}
+function votmCharCount(el){document.getElementById('votm-char-ct').textContent=el.value.length;}
+function saveVotmQuote(){
+  const quote=document.getElementById('votm-quote-input').value.trim();
+  const err=document.getElementById('votm-err');
+  if(quote.length>500){err.textContent='Quote must be 500 characters or less.';err.classList.add('show');return;}
+  if(hasProfanity(quote)){err.textContent='⚠️ Your quote contains inappropriate language. Please revise it.';err.classList.add('show');return;}
+  const winner=computeVotmWinner();
+  if(!winner)return;
+  setVotm({userId:winner.id,name:fullName(winner),quote,month:getMonthKey()});
+  closeModal('votm-modal');
+  showToast('✓ Quote saved!');
+  renderCurrentPage();
+}
+
+// ── CHART HELPERS ──
+function drawLineChart(canvasId,labels,values,color='#C8922A',fillColor='rgba(200,146,42,0.12)'){
+  const canvas=document.getElementById(canvasId);
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  const W=canvas.offsetWidth||300,H=canvas.height||160;
+  canvas.width=W;
+  const pad={t:10,r:10,b:28,l:38};
+  const cW=W-pad.l-pad.r,cH=H-pad.t-pad.b;
+  const maxV=Math.max(...values,1);
+  const px=i=>pad.l+(labels.length>1?i/(labels.length-1)*cW:cW/2);
+  const py=v=>pad.t+cH-(v/maxV)*cH;
+  ctx.clearRect(0,0,W,H);
+  // Grid
+  ctx.strokeStyle='#E8E0D4';ctx.lineWidth=1;
+  for(let g=0;g<=4;g++){
+    const y=pad.t+g*(cH/4);
+    ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(pad.l+cW,y);ctx.stroke();
+    ctx.fillStyle='#8A837A';ctx.font='10px sans-serif';ctx.textAlign='right';
+    ctx.fillText(Math.round(maxV*(1-g/4)),pad.l-4,y+4);
+  }
+  // X labels
+  ctx.fillStyle='#8A837A';ctx.font='10px sans-serif';ctx.textAlign='center';
+  const step=Math.max(1,Math.floor(labels.length/5));
+  labels.forEach((l,i)=>{if(i%step===0||i===labels.length-1)ctx.fillText(l,px(i),H-6);});
+  // Fill
+  if(values.length>1){
+    ctx.beginPath();ctx.moveTo(px(0),py(values[0]));
+    values.forEach((v,i)=>{if(i>0)ctx.lineTo(px(i),py(v));});
+    ctx.lineTo(px(values.length-1),pad.t+cH);ctx.lineTo(px(0),pad.t+cH);ctx.closePath();
+    ctx.fillStyle=fillColor;ctx.fill();
+  }
+  // Line
+  ctx.beginPath();ctx.strokeStyle=color;ctx.lineWidth=2.5;ctx.lineJoin='round';
+  values.forEach((v,i)=>{i===0?ctx.moveTo(px(i),py(v)):ctx.lineTo(px(i),py(v));});
+  ctx.stroke();
+  // Dots
+  values.forEach((v,i)=>{
+    ctx.beginPath();ctx.arc(px(i),py(v),4,0,Math.PI*2);
+    ctx.fillStyle=color;ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=1.5;ctx.stroke();
+  });
+}
+
+function drawBarChart(canvasId,labels,values,color='#2D7A4F'){
+  const canvas=document.getElementById(canvasId);
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  const W=canvas.offsetWidth||300,H=canvas.height||140;
+  canvas.width=W;
+  const pad={t:10,r:10,b:28,l:38};
+  const cW=W-pad.l-pad.r,cH=H-pad.t-pad.b;
+  const maxV=Math.max(...values,1);
+  ctx.clearRect(0,0,W,H);
+  // Grid
+  ctx.strokeStyle='#E8E0D4';ctx.lineWidth=1;
+  for(let g=0;g<=4;g++){
+    const y=pad.t+g*(cH/4);
+    ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(pad.l+cW,y);ctx.stroke();
+    ctx.fillStyle='#8A837A';ctx.font='10px sans-serif';ctx.textAlign='right';
+    ctx.fillText(Math.round(maxV*(1-g/4)),pad.l-4,y+4);
+  }
+  // Bars
+  const barW=Math.max(4,cW/labels.length*0.6);
+  labels.forEach((l,i)=>{
+    const x=pad.l+i/(labels.length)*cW+(cW/labels.length-barW)/2;
+    const bH=values[i]/maxV*cH;
+    const y=pad.t+cH-bH;
+    ctx.fillStyle=values[i]>0?color:'#E8E0D4';
+    ctx.beginPath();
+    ctx.roundRect?ctx.roundRect(x,y,barW,bH,3):ctx.rect(x,y,barW,bH);
+    ctx.fill();
+    // X label
+    ctx.fillStyle='#8A837A';ctx.font='10px sans-serif';ctx.textAlign='center';
+    ctx.fillText(l,x+barW/2,H-6);
+  });
+}
+
+// ── BOARD PAGES ──
+const approvedHrs=uid=>requests.filter(r=>r.userId===uid&&r.status==='approved').reduce((s,r)=>s+r.hours,0);
+const totalHrs=()=>requests.filter(r=>r.status==='approved').reduce((s,r)=>s+r.hours,0);
+const pendingCt=()=>requests.filter(r=>r.status==='pending').length;
+
+function renderDash(){
+  const el=document.getElementById('page-dash');
+  const vols=users.filter(u=>u.role==='volunteer');
+  const pend=pendingCt();
+  // oldest first → newest at bottom
+  const recent=[...requests].sort((a,b)=>new Date(a.submittedAt)-new Date(b.submittedAt)).slice(-8);
+  el.innerHTML=`
+    <div class="entry-card" onclick="showPage('pending',document.getElementById('nav-pending'))">
+      <div class="entry-card-icon">🏛️</div>
+      <div><div class="entry-card-title">Organizer Dashboard</div><div class="entry-card-sub">${pend} pending · tap to review</div></div>
+      <div style="margin-left:auto;font-size:22px;">›</div>
+    </div>
+    <div class="sec">Overview</div>
+    <div class="stats">
+      <div class="stat"><div class="stat-v">${totalHrs()}</div><div class="stat-l">Approved Hours</div></div>
+      <div class="stat"><div class="stat-v">${vols.length}</div><div class="stat-l">Volunteers</div></div>
+      <div class="stat"><div class="stat-v" style="color:${pend>0?'var(--amber)':'var(--green)'}">${pend}</div><div class="stat-l">Pending</div></div>
+      <div class="stat"><div class="stat-v">${requests.filter(r=>r.status==='approved').length}</div><div class="stat-l">Sessions</div></div>
+    </div>
+    <div class="sec" style="display:flex;align-items:center;justify-content:space-between;">
+      <span>Recent Activity <span style="font-weight:400;color:var(--ink3);">(earliest → latest)</span></span>
+    </div>
+    <div class="card">${recent.length===0?emptyHTML('📋','No activity yet'):recent.map(r=>`<div class="req-row">
+      <div class="avatar">${initials(users.find(u=>u.id===r.userId)||{firstName:'?',lastName:'?'})}</div>
+      <div style="flex:1;"><div class="req-name">${r.userName}</div><div class="req-meta">${r.activity||'Session'} · ${fmtDate(r.date)} · ${r.hours}h</div><div class="req-meta" style="font-size:11px;">${new Date(r.submittedAt).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})}</div></div>
+      <span class="badge ${r.status==='approved'?'badge-app':r.status==='rejected'?'badge-rej':'badge-pend'}">${r.status}</span>
+    </div>`).join('')}</div>
+    <div class="sec">Volunteer of the Month</div>
+    ${votmCard(false)}`;
+}
+
+function renderPending(){
+  const el=document.getElementById('page-pending');
+  const pend=requests.filter(r=>r.status==='pending').sort((a,b)=>new Date(a.submittedAt)-new Date(b.submittedAt));
+  const done=requests.filter(r=>r.status!=='pending').sort((a,b)=>new Date(b.submittedAt)-new Date(a.submittedAt));
+  el.innerHTML=`
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <div class="sec" style="margin:0;">Pending Approval (${pend.length})</div>
+      <button class="btn btn-sm btn-p" onclick="openManualLog()">+ Manual Entry</button>
+    </div>
+    <div class="card">${pend.length===0?emptyHTML('✅','All caught up!'):pend.map(r=>reqCard(r,true)).join('')}</div>
+    <div class="sec">Previously Reviewed</div>
+    <div class="card">${done.length===0?emptyHTML('📋','Nothing yet'):done.slice(0,20).map(r=>reqCard(r,false)).join('')}</div>`;
+}
+function reqCard(r,actions){
+  const u=users.find(u=>u.id===r.userId)||{firstName:'?',lastName:'?',id:''};
+  return`<div class="req-row">
+    <div class="avatar" style="cursor:pointer;" onclick="openVolProfile('${u.id}')">${initials(u)}</div>
+    <div style="flex:1;min-width:0;">
+      <div class="req-name" style="cursor:pointer;color:var(--gold-d);" onclick="openVolProfile('${u.id}')">${r.userName} <span style="font-size:11px;color:var(--ink3);">› view</span></div>
+      <div class="req-meta">${r.activity||'Session'} · <strong>${fmtDate(r.date)}</strong> · <strong>${r.hours}h</strong></div>
+      ${r.notes?`<div class="req-meta" style="font-style:italic">${r.notes}</div>`:''}
+      ${r.rejectReason?`<div class="req-meta" style="color:var(--red)">Reason: ${r.rejectReason}</div>`:''}
+      ${!actions&&r.reviewedBy?`<div class="req-meta">By ${r.reviewedBy}</div>`:''}
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;">
+      <span class="badge ${r.status==='approved'?'badge-app':r.status==='rejected'?'badge-rej':'badge-pend'}">${r.status}</span>
+      ${actions?`<div style="display:flex;gap:5px;margin-top:2px;">
+        <button class="btn btn-sm btn-g" onclick="approveReq('${r.id}')">✓</button>
+        <button class="btn btn-sm btn-r" onclick="rejectReq('${r.id}')">✕</button>
+      </div>`:''}
+    </div>
+  </div>`;
+}
+async function approveReq(id){await updateRequest(id,{status:'approved',reviewedBy:fullName(currentUser),reviewedAt:ts()});showToast('✓ Approved!');}
+async function rejectReq(id){
+  const reason=prompt('Reason for rejection (optional):');
+  if(reason===null)return;
+  await updateRequest(id,{status:'rejected',reviewedBy:fullName(currentUser),reviewedAt:ts(),rejectReason:reason||''});
+  showToast('Request rejected');
+}
+
+// ── VOLUNTEER PROFILE MODAL ──
+function openVolProfile(userId){
+  const u=users.find(u=>u.id===userId);
+  if(!u)return;
+  const myReqs=requests.filter(r=>r.userId===userId);
+  const approved=myReqs.filter(r=>r.status==='approved').sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const rejected=myReqs.filter(r=>r.status==='rejected').sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const totalH=approved.reduce((s,r)=>s+r.hours,0);
+  document.getElementById('vpm-avatar').textContent=initials(u);
+  document.getElementById('vpm-name').textContent=fullName(u);
+  document.getElementById('vpm-email').textContent=u.email+(u.phone?' · 📞 '+u.phone:'');
+  document.getElementById('vpm-badge').innerHTML=roleBadge(u.role);
+  document.getElementById('vpm-hrs').textContent=totalH;
+  document.getElementById('vpm-sess').textContent=approved.length;
+  document.getElementById('vpm-rej').textContent=rejected.length;
+
+  // Approved tab
+  document.getElementById('vpm-approved-tab').innerHTML=approved.length===0?emptyHTML('📋','No approved hours yet'):
+    approved.map(r=>`<div class="req-row">
+      <div style="background:var(--green-bg);color:var(--green);border-radius:8px;padding:4px 10px;font-weight:700;font-size:13px;flex-shrink:0;">${r.hours}h</div>
+      <div style="flex:1;">
+        <div class="req-name">${r.activity||'Session'}</div>
+        <div class="req-meta">📅 ${fmtDate(r.date)}</div>
+        ${r.notes?`<div class="req-meta" style="font-style:italic">${r.notes}</div>`:''}
+        <div class="req-meta">Approved by ${r.reviewedBy||'—'}</div>
+      </div>
+    </div>`).join('');
+
+  // Rejections tab
+  document.getElementById('vpm-rejections-tab').innerHTML=rejected.length===0?emptyHTML('✅','No rejections — great!'):
+    rejected.map(r=>`<div class="rej-box">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+        <div style="font-weight:600;font-size:14px;color:var(--red);">${r.activity||'Session'}</div>
+        <div style="font-size:12px;color:var(--red);font-weight:600;">${r.hours}h</div>
+      </div>
+      <div style="font-size:12px;color:var(--ink3);">📅 ${fmtDate(r.date)}</div>
+      ${r.rejectReason?`<div style="margin-top:6px;font-size:13px;color:var(--red);"><strong>Reason:</strong> ${r.rejectReason}</div>`:'<div style="margin-top:6px;font-size:12px;color:var(--ink3);">No reason provided</div>'}
+      <div style="font-size:11px;color:var(--ink3);margin-top:4px;">Reviewed by ${r.reviewedBy||'—'} · ${fmtDate(r.reviewedAt||r.submittedAt)}</div>
+    </div>`).join('');
+
+  // Reset to approved tab
+  document.querySelectorAll('.detail-tab').forEach((t,i)=>{t.classList.toggle('active',i===0);});
+  document.getElementById('vpm-approved-tab').style.display='block';
+  document.getElementById('vpm-rejections-tab').style.display='none';
+  openModal('vol-profile-modal');
+}
+
+function switchVolTab(tab,btn){
+  document.querySelectorAll('.detail-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('vpm-approved-tab').style.display=tab==='approved'?'block':'none';
+  document.getElementById('vpm-rejections-tab').style.display=tab==='rejections'?'block':'none';
+}
+
+function renderTeam(){
+  const el=document.getElementById('page-team');
+
+  // Build last 30 days data for line graph
+  const days=30;
+  const now=new Date();
+  const labels=[], data=[];
+  for(let i=days-1;i>=0;i--){
+    const d=new Date(now);d.setDate(d.getDate()-i);
+    const key=d.toISOString().split('T')[0];
+    labels.push(key);
+    data.push(requests.filter(r=>r.status==='approved'&&r.date===key).reduce((s,r)=>s+r.hours,0));
+  }
+  // Cumulative
+  const cumulative=[];let running=0;
+  data.forEach(v=>{running+=v;cumulative.push(running);});
+
+  el.innerHTML=`
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <div class="sec" style="margin:0;">All Members (${users.length})</div>
+      <button class="btn btn-sm btn-p" onclick="openAddVol()">+ Add</button>
+    </div>
+    <div class="sec">📈 Total Hours — Last 30 Days</div>
+    <div class="card" style="padding:12px;">
+      <canvas id="hours-chart" height="160"></canvas>
+    </div>
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" placeholder="Search members…" id="team-search" oninput="filterTeam()"/>
+    </div>
+    <div class="sec" style="margin-top:16px;">🏛️ Organizers</div>
+    <div class="card" id="team-board"></div>
+    <div class="sec">🙋 Volunteers</div>
+    <div class="card" id="team-vols"></div>`;
+
+  filterTeam();
+  requestAnimationFrame(()=>drawLineChart('hours-chart',labels.map((_,i)=>{if(i===0||i===7||i===14||i===21||i===29){const d=new Date(labels[i]+'T12:00:00');return(d.getMonth()+1)+'/'+d.getDate();}return'';}),cumulative));
+}
+function filterTeam(){
+  const q=(document.getElementById('team-search')?.value||'').toLowerCase();
+  const all=users.filter(u=>fullName(u).toLowerCase().includes(q)||u.email.toLowerCase().includes(q));
+  const board=all.filter(u=>isBoard(u));
+  const vols=all.filter(u=>!isBoard(u));
+  const bEl=document.getElementById('team-board');
+  const vEl=document.getElementById('team-vols');
+  if(bEl)bEl.innerHTML=board.length===0?emptyHTML('','No organizers'):board.map(v=>teamRow(v)).join('');
+  if(vEl)vEl.innerHTML=vols.length===0?emptyHTML('👥','No volunteers'):vols.map(v=>teamRow(v)).join('');
+}
+function teamRow(v){
+  const hrs=approvedHrs(v.id);
+  const sess=requests.filter(r=>r.userId===v.id&&r.status==='approved').length;
+  const isMe=currentUser&&v.id===currentUser.id;
+  return`<div class="vol-row">
+    <div class="avatar" style="cursor:pointer;" onclick="openVolProfile('${v.id}')">${initials(v)}</div>
+    <div style="flex:1;min-width:0;cursor:pointer;" onclick="openVolProfile('${v.id}')">
+      <div class="req-name" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;color:var(--gold-d);">${fullName(v)} ${roleBadge(v.role)}</div>
+      <div class="req-meta">${v.email}${v.phone?' · 📞 '+v.phone:''}</div>
+      <div class="req-meta">${sess} sessions${v.notes?' · '+v.notes:''}</div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+      <div class="vol-hrs">${hrs}<span> hrs</span></div>
+      <div style="display:flex;gap:5px;">
+        <button class="btn btn-sm btn-s" onclick="event.stopPropagation();openPromote('${v.id}')">Role ›</button>
+        ${!isMe?`<button class="btn btn-sm btn-r" onclick="event.stopPropagation();deleteUser('${v.id}')">Remove</button>`:''}
+      </div>
+    </div>
+  </div>`;
+}
+
+async function deleteUser(userId){
+  const u=users.find(u=>u.id===userId);
+  if(!u)return;
+  if(!confirm(`Remove ${fullName(u)} from the portal? Their hour records will also be deleted.`))return;
+  showLoading('Removing…');
+  // Delete their requests too
+  const theirReqs=requests.filter(r=>r.userId===userId);
+  await Promise.all(theirReqs.map(r=>removeRequest(r.id)));
+  await removeUser(userId);
+  hideLoading();
+  showToast('✓ Member removed');
+}
+
+function renderAllHours(){
+  const el=document.getElementById('page-allhours');
+  const approved=requests.filter(r=>r.status==='approved').sort((a,b)=>new Date(b.date)-new Date(a.date));
+  el.innerHTML=`
+    <div class="sec">All Approved Hours (${approved.length})</div>
+    <div class="card">${approved.length===0?emptyHTML('📋','No approved hours yet'):approved.map(r=>`<div class="req-row">
+      <div class="avatar">${initials(users.find(u=>u.id===r.userId)||{firstName:'?',lastName:'?'})}</div>
+      <div style="flex:1"><div class="req-name">${r.userName}</div><div class="req-meta">${r.activity||'Session'} · ${fmtDate(r.date)}</div></div>
+      <div style="text-align:right;">
+        <div style="font-weight:600;color:var(--green);background:var(--green-bg);padding:2px 9px;border-radius:20px;font-size:12px;">+${r.hours}h</div>
+        <button onclick="deleteEntry('${r.id}')" style="font-size:11px;color:var(--ink3);background:none;border:none;cursor:pointer;margin-top:3px;">delete</button>
+      </div>
+    </div>`).join('')}</div>`;
+}
+async function deleteEntry(id){if(!confirm('Delete this entry?'))return;await removeRequest(id);showToast('Deleted');}
+
+function renderReports(){
+  const el=document.getElementById('page-reports');
+  const byVol={};
+  requests.filter(r=>r.status==='approved').forEach(r=>{
+    if(!byVol[r.userId])byVol[r.userId]={name:r.userName,hours:0,sessions:0};
+    byVol[r.userId].hours+=r.hours;byVol[r.userId].sessions++;
+  });
+  const rows=Object.values(byVol).sort((a,b)=>b.hours-a.hours);
+  const tot=totalHrs();
+  const savedGoal=parseInt(localStorage.getItem('alm_goal')||0);
+  el.innerHTML=`
+    <div class="sec">Hours by Member</div>
+    <div class="card">${rows.length===0?emptyHTML('📊','No data yet'):`<table class="tbl"><thead><tr><th>Name</th><th>Hours</th><th>Sessions</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r.name}</td><td>${r.hours}</td><td>${r.sessions}</td></tr>`).join('')}</tbody></table>`}</div>
+    <div class="sec">Export CSV</div>
+    <div class="card">
+      <div class="fr" style="margin-bottom:12px;">
+        <div><label class="fl">From</label><input class="fi" type="date" id="exp-from"/></div>
+        <div><label class="fl">To</label><input class="fi" type="date" id="exp-to"/></div>
+      </div>
+      <button class="btn btn-p" onclick="exportCSV()">⬇ Download CSV</button>
+    </div>
+    <div class="sec">Monthly Goal</div>
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+        <label class="fl" style="margin:0;">Target:</label>
+        <input class="fi" type="number" id="goal-in" style="width:80px;padding:6px 10px;" value="${savedGoal||''}" placeholder="500" oninput="updateGoal(${tot})"/>
+        <span style="font-size:13px;color:var(--ink3);">hrs</span>
+      </div>
+      <div style="font-size:12px;color:var(--ink3);margin-bottom:6px;" id="goal-lbl">—</div>
+      <div class="prog"><div class="prog-fill" id="goal-bar" style="width:0%"></div></div>
+    </div>`;
+  const t=new Date().toISOString().split('T')[0];
+  document.getElementById('exp-from').value=t.slice(0,7)+'-01';
+  document.getElementById('exp-to').value=t;
+  updateGoal(tot);
+}
+function updateGoal(tot){
+  const g=parseInt(document.getElementById('goal-in')?.value||0);
+  localStorage.setItem('alm_goal',g);
+  const pct=g?Math.min(100,Math.round(tot/g*100)):0;
+  const bar=document.getElementById('goal-bar'),lbl=document.getElementById('goal-lbl');
+  if(bar)bar.style.width=pct+'%';
+  if(lbl)lbl.textContent=g?`${tot} of ${g} hrs (${pct}%)`:'Set a goal above';
+}
+function exportCSV(){
+  const from=document.getElementById('exp-from')?.value,to=document.getElementById('exp-to')?.value;
+  let rows=requests.filter(r=>r.status==='approved');
+  if(from)rows=rows.filter(r=>r.date>=from);
+  if(to)rows=rows.filter(r=>r.date<=to);
+  rows.sort((a,b)=>new Date(a.date)-new Date(b.date));
+  const csv='Name,Email,Phone,Date,Hours,Activity,Notes,Approved By\n'+rows.map(r=>{
+    const u=users.find(u=>u.id===r.userId)||{email:'',phone:''};
+    return`"${r.userName}","${u.email}","${u.phone||''}","${r.date}","${r.hours}","${r.activity||''}","${r.notes||''}","${r.reviewedBy||''}"`;
+  }).join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='ALM_Hours.csv';a.click();
+  showToast('✓ Downloaded!');
+}
+
+function renderBSettings(){
+  const el=document.getElementById('page-bsettings');
+  el.innerHTML=`
+    <div class="sec">Your Account</div>
+    <div class="settings-section">
+      <div class="settings-row" onclick="openSettingsModal()">
+        <div style="display:flex;align-items:center;gap:12px;flex:1;">
+          <div class="settings-row-icon" style="background:var(--gold-l);">🔒</div>
+          <div><div class="settings-row-label">Change Email or Password</div><div class="settings-row-sub">${currentUser.email}</div></div>
+        </div>
+        <div class="settings-chevron">›</div>
+      </div>
+    </div>
+    <div class="sec">Your Info</div>
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:14px;">
+        <div class="avatar" style="width:52px;height:52px;font-size:18px;">${initials(currentUser)}</div>
+        <div>
+          <div style="font-weight:600;font-size:16px;">${fullName(currentUser)}</div>
+          <div style="font-size:13px;color:var(--ink3);">${currentUser.email}</div>
+          ${currentUser.phone?`<div style="font-size:13px;color:var(--ink3);">📞 ${currentUser.phone}</div>`:''}
+          <div style="margin-top:4px;">${roleBadge(currentUser.role)}</div>
+        </div>
+      </div>
+    </div>
+    <div class="sec">Danger Zone</div>
+    <div class="card">
+      <button class="btn btn-r" onclick="clearAll()" style="width:auto;">🗑 Clear All Data</button>
+      <div style="font-size:11px;color:var(--ink3);margin-top:8px;">Permanently deletes all cloud data. Cannot be undone.</div>
+    </div>`;
+}
+
+// ── VOLUNTEER PAGES ──
+function renderVolHome(){
+  const el=document.getElementById('page-vol-home');
+  const mine=requests.filter(r=>r.userId===currentUser.id);
+  const approved=mine.filter(r=>r.status==='approved');
+  const pend=mine.filter(r=>r.status==='pending');
+  const allTimeHrs=approved.reduce((s,r)=>s+r.hours,0);
+  const monthStr=new Date().toISOString().slice(0,7);
+  const thisMonthHrs=approved.filter(r=>r.date.startsWith(monthStr)).reduce((s,r)=>s+r.hours,0);
+
+  // Bar chart: last 8 weeks, grouped by week
+  const weeks=8;
+  const weekLabels=[],weekData=[];
+  for(let i=weeks-1;i>=0;i--){
+    const start=new Date();start.setDate(start.getDate()-i*7-6);
+    const end=new Date();end.setDate(end.getDate()-i*7);
+    const startKey=start.toISOString().split('T')[0];
+    const endKey=end.toISOString().split('T')[0];
+    weekLabels.push((start.getMonth()+1)+'/'+(start.getDate()));
+    weekData.push(approved.filter(r=>r.date>=startKey&&r.date<=endKey).reduce((s,r)=>s+r.hours,0));
+  }
+
+  el.innerHTML=`
+    <div class="sec">Hello, ${currentUser.firstName}! 👋</div>
+    <div class="stats" style="grid-template-columns:1fr 1fr 1fr;">
+      <div class="stat"><div class="stat-v">${allTimeHrs}</div><div class="stat-l">All-Time Hrs</div></div>
+      <div class="stat"><div class="stat-v" style="color:var(--green)">${thisMonthHrs}</div><div class="stat-l">This Month</div></div>
+      <div class="stat"><div class="stat-v" style="color:${pend.length?'var(--amber)':'var(--green)'}">${pend.length}</div><div class="stat-l">Pending</div></div>
+    </div>
+    <div class="sec">📊 My Weekly Progress</div>
+    <div class="card" style="padding:12px;">
+      <canvas id="vol-bar-chart" height="140"></canvas>
+    </div>
+    <button class="btn btn-p" style="margin-bottom:16px;" onclick="showPage('vol-request',document.getElementById('nav-vol-request'))">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+      Request Hours
+    </button>
+    ${votmCard(true)}
+    <div class="sec">Recent</div>
+    <div class="card">${mine.length===0?emptyHTML('📋','No requests yet — submit your first!'):
+      [...mine].sort((a,b)=>new Date(b.submittedAt)-new Date(a.submittedAt)).slice(0,6).map(r=>`
+        <div class="req-row">
+          <div class="avatar" style="background:var(--green-bg);color:var(--green);">${r.hours}h</div>
+          <div><div class="req-name">${r.activity||'Session'}</div><div class="req-meta">${fmtDate(r.date)}</div>
+          ${r.rejectReason?`<div class="req-meta" style="color:var(--red)">Reason: ${r.rejectReason}</div>`:''}</div>
+          <span class="badge ${r.status==='approved'?'badge-app':r.status==='rejected'?'badge-rej':'badge-pend'}">${r.status}</span>
+        </div>`).join('')}
+    </div>`;
+
+  requestAnimationFrame(()=>drawBarChart('vol-bar-chart',weekLabels,weekData,'#2D7A4F'));
+}
+function renderVolRequest(){
+  const el=document.getElementById('page-vol-request');
+  el.innerHTML=`
+    <div class="sec">Submit Hours</div>
+    <div class="card">
+      <div style="font-size:13px;color:var(--ink3);margin-bottom:14px;">Fill in your session details. A board member will review and approve.</div>
+      <div class="fr">
+        <div class="fg"><label class="fl">Date *</label><input class="fi" type="date" id="vr-date"/></div>
+        <div class="fg"><label class="fl">Hours *</label><input class="fi" type="number" id="vr-hours" min=".5" max="24" step=".5" placeholder="e.g. 3"/></div>
+      </div>
+      <div class="fg"><label class="fl">Activity / Event *</label><input class="fi" type="text" id="vr-activity" placeholder="e.g. Saturday Art Class…"/></div>
+      <div class="fg"><label class="fl">Notes (optional)</label><textarea class="ft" id="vr-notes" placeholder="Any details…"></textarea></div>
+      <button class="btn btn-p" onclick="submitVolReq()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg>
+        Submit Request
+      </button>
+    </div>
+    <div style="background:var(--blue-bg);border-radius:10px;padding:11px 13px;font-size:13px;color:var(--blue);">
+      ℹ️ Hours show as <strong>Pending</strong> until approved. Check your Home tab for updates.
+    </div>`;
+  document.getElementById('vr-date').value=new Date().toISOString().split('T')[0];
+}
+async function submitVolReq(){
+  const date=document.getElementById('vr-date').value;
+  const hours=parseFloat(document.getElementById('vr-hours').value);
+  const activity=document.getElementById('vr-activity').value.trim();
+  const notes=document.getElementById('vr-notes').value.trim();
+  if(!date)return alert('Please enter a date.');
+  if(!hours||hours<=0)return alert('Please enter valid hours.');
+  if(!activity)return alert('Please describe the activity.');
+  await saveRequest({id:uid(),userId:currentUser.id,userName:fullName(currentUser),date,hours,activity,notes,status:'pending',submittedAt:ts()});
+  document.getElementById('vr-hours').value='';document.getElementById('vr-activity').value='';document.getElementById('vr-notes').value='';
+  showToast('✓ Request submitted!');
+  showPage('vol-home',document.getElementById('nav-vol-home'));
+}
+function renderVolHistory(){
+  const el=document.getElementById('page-vol-history');
+  const mine=[...requests.filter(r=>r.userId===currentUser.id)].sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const allApproved=mine.filter(r=>r.status==='approved');
+  const now=new Date();
+  const monthStr=now.toISOString().slice(0,7);
+  const thisMonthApproved=allApproved.filter(r=>r.date.startsWith(monthStr));
+  const thisMonthHrs=thisMonthApproved.reduce((s,r)=>s+r.hours,0);
+  const allTimeHrs=allApproved.reduce((s,r)=>s+r.hours,0);
+
+  // Line graph: every day this month up to today
+  const daysInMonth=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
+  const today=now.getDate();
+  const lineLabels=[],lineData=[];
+  for(let d=1;d<=today;d++){
+    const key=monthStr+'-'+String(d).padStart(2,'0');
+    lineLabels.push(d+'');
+    lineData.push(thisMonthApproved.filter(r=>r.date===key).reduce((s,r)=>s+r.hours,0));
+  }
+
+  el.innerHTML=`
+    <div class="sec">My Hour History</div>
+    <div class="stats" style="grid-template-columns:1fr 1fr 1fr;">
+      <div class="stat"><div class="stat-v">${allTimeHrs}</div><div class="stat-l">All-Time</div></div>
+      <div class="stat"><div class="stat-v" style="color:var(--green)">${thisMonthHrs}</div><div class="stat-l">This Month</div></div>
+      <div class="stat"><div class="stat-v">${mine.filter(r=>r.status==='pending').length}</div><div class="stat-l">Pending</div></div>
+    </div>
+    <div class="sec">📈 Hours This Month — by Day</div>
+    <div class="card" style="padding:12px;">
+      <canvas id="vol-line-chart" height="150"></canvas>
+    </div>
+    <div style="background:var(--blue-bg);border-radius:8px;padding:9px 12px;font-size:12px;color:var(--blue);margin-bottom:12px;">
+      ℹ️ At the end of each month, this month's hours are added to your all-time total automatically.
+    </div>
+    <div class="card">${mine.length===0?emptyHTML('📋','No requests yet'):mine.map(r=>`<div class="req-row">
+      <div class="avatar" style="background:var(--green-bg);color:var(--green);">${r.hours}h</div>
+      <div style="flex:1"><div class="req-name">${r.activity||'Session'}</div><div class="req-meta">${fmtDate(r.date)}</div>
+      ${r.rejectReason?`<div class="req-meta" style="color:var(--red)">Reason: ${r.rejectReason}</div>`:''}</div>
+      <span class="badge ${r.status==='approved'?'badge-app':r.status==='rejected'?'badge-rej':'badge-pend'}">${r.status}</span>
+    </div>`).join('')}</div>`;
+
+  requestAnimationFrame(()=>drawLineChart('vol-line-chart',lineLabels,lineData,'#2D7A4F','rgba(45,122,79,0.1)'));
+}
+function renderVSettings(){
+  const el=document.getElementById('page-vsettings');
+  el.innerHTML=`
+    <div class="sec">Your Account</div>
+    <div class="settings-section">
+      <div class="settings-row" onclick="openSettingsModal()">
+        <div style="display:flex;align-items:center;gap:12px;flex:1;">
+          <div class="settings-row-icon" style="background:var(--gold-l);">🔒</div>
+          <div><div class="settings-row-label">Change Email or Password</div><div class="settings-row-sub">${currentUser.email}</div></div>
+        </div>
+        <div class="settings-chevron">›</div>
+      </div>
+    </div>
+    <div class="sec">Your Info</div>
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:14px;">
+        <div class="avatar" style="width:52px;height:52px;font-size:18px;">${initials(currentUser)}</div>
+        <div>
+          <div style="font-weight:600;font-size:16px;">${fullName(currentUser)}</div>
+          <div style="font-size:13px;color:var(--ink3);">${currentUser.email}</div>
+          ${currentUser.phone?`<div style="font-size:13px;color:var(--ink3);">📞 ${currentUser.phone}</div>`:''}
+          <div style="margin-top:4px;">${roleBadge(currentUser.role)}</div>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ── SETTINGS MODAL ──
+function openSettingsModal(){
+  // Reset all fields and messages
+  ['set-email-err','set-email-suc','set-pass-err','set-pass-suc'].forEach(id=>{
+    const el=document.getElementById(id);if(el){el.classList.remove('show');el.textContent='';}
+  });
+  ['set-email','set-email-pass','set-cur-pass','set-new-pass','set-new-pass2'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.value='';
+  });
+  document.getElementById('set-email-forgot').classList.remove('show');
+  document.getElementById('set-pass-forgot').classList.remove('show');
+  if(wrongPassTimer){clearTimeout(wrongPassTimer);wrongPassTimer=null;}
+  openModal('settings-modal');
+}
+window.openSettingsModal=openSettingsModal;
+
+function resetWrongPassHint(which){
+  // Hide the "forgot password" hint when user starts typing again
+  document.getElementById(`set-${which==='email'?'email':'pass'}-forgot`).classList.remove('show');
+  if(wrongPassTimer){clearTimeout(wrongPassTimer);wrongPassTimer=null;}
+}
+
+function goForgotFromSettings(){
+  closeModal('settings-modal');
+  document.getElementById('auth-screen').style.display='flex';
+  document.getElementById('app-screen').style.display='none';
+  document.getElementById('auth-form-wrap').style.display='none';
+  document.getElementById('forgot-screen').style.display='block';
+  document.getElementById('fp-email').value=currentUser?.email||'';
+  showForgotStep(1);
+}
+
+async function changeEmail(){
+  const newEmail=document.getElementById('set-email').value.trim().toLowerCase();
+  const pass=document.getElementById('set-email-pass').value;
+  const err=document.getElementById('set-email-err'),suc=document.getElementById('set-email-suc');
+  err.classList.remove('show');suc.classList.remove('show');
+  if(!newEmail){err.textContent='Please enter a new email.';err.classList.add('show');return;}
+  if(currentUser.password!==pass){
+    err.textContent='Incorrect current password.';err.classList.add('show');
+    document.getElementById('set-email-pass').classList.add('shake');
+    setTimeout(()=>document.getElementById('set-email-pass').classList.remove('shake'),400);
+    // Show "forgot password?" after 2 seconds
+    wrongPassTimer=setTimeout(()=>document.getElementById('set-email-forgot').classList.add('show'),2000);
+    return;
+  }
+  if(users.find(u=>u.email===newEmail&&u.id!==currentUser.id)){err.textContent='That email is already in use.';err.classList.add('show');return;}
+  await updateUser(currentUser.id,{email:newEmail});
+  currentUser.email=newEmail;
+  suc.textContent='Email updated!';suc.classList.add('show');
+  document.getElementById('set-email').value='';document.getElementById('set-email-pass').value='';
+}
+
+async function changePassword(){
+  const cur=document.getElementById('set-cur-pass').value;
+  const np=document.getElementById('set-new-pass').value;
+  const np2=document.getElementById('set-new-pass2').value;
+  const err=document.getElementById('set-pass-err'),suc=document.getElementById('set-pass-suc');
+  err.classList.remove('show');suc.classList.remove('show');
+  if(currentUser.password!==cur){
+    err.textContent='Current password is incorrect.';err.classList.add('show');
+    document.getElementById('set-cur-pass').classList.add('shake');
+    setTimeout(()=>document.getElementById('set-cur-pass').classList.remove('shake'),400);
+    wrongPassTimer=setTimeout(()=>document.getElementById('set-pass-forgot').classList.add('show'),2000);
+    return;
+  }
+  if(np.length<6){err.textContent='New password must be at least 6 characters.';err.classList.add('show');return;}
+  if(np!==np2){err.textContent='New passwords do not match.';err.classList.add('show');return;}
+  await updateUser(currentUser.id,{password:np});
+  currentUser.password=np;
+  suc.textContent='Password updated!';suc.classList.add('show');
+  ['set-cur-pass','set-new-pass','set-new-pass2'].forEach(id=>document.getElementById(id).value='');
+}
+
+// ── ADD VOLUNTEER ──
+function openAddVol(){
+  ['av-first','av-last','av-email','av-phone','av-pass','av-notes'].forEach(id=>document.getElementById(id).value='');
+  document.querySelectorAll('#av-role-grid .role-opt').forEach(o=>o.classList.remove('selected'));
+  document.querySelector('#av-role-grid [data-role="volunteer"]').classList.add('selected');
+  openModal('addvol-modal');
+}
+function selectRole(el){el.closest('.role-grid').querySelectorAll('.role-opt').forEach(o=>o.classList.remove('selected'));el.classList.add('selected');}
+async function saveNewVolunteer(){
+  const first=document.getElementById('av-first').value.trim();
+  const last=document.getElementById('av-last').value.trim();
+  const email=document.getElementById('av-email').value.trim().toLowerCase();
+  const phone=document.getElementById('av-phone').value.trim();
+  const pass=document.getElementById('av-pass').value;
+  const notes=document.getElementById('av-notes').value.trim();
+  const role=document.querySelector('#av-role-grid .role-opt.selected')?.dataset.role||'volunteer';
+  if(!first||!last)return alert('Please enter a full name.');
+  if(!email)return alert('Please enter an email.');
+  if(users.find(u=>u.email.toLowerCase()===email))return alert('An account with that email already exists.');
+  if(!pass||pass.length<4)return alert('Please enter a temporary password (min 4 chars).');
+  await saveUser({id:'u_'+uid(),email,password:pass,firstName:first,lastName:last,role,phone:phone||'',notes,createdAt:ts()});
+  closeModal('addvol-modal');showToast('✓ Account created!');
+}
+
+// ── MANUAL LOG ──
+function openManualLog(){
+  const sel=document.getElementById('ml-vol');
+  sel.innerHTML=users.map(u=>`<option value="${u.id}">${fullName(u)}</option>`).join('');
+  document.getElementById('ml-date').value=new Date().toISOString().split('T')[0];
+  ['ml-hours','ml-activity','ml-notes'].forEach(id=>document.getElementById(id).value='');
+  openModal('manlog-modal');
+}
+async function saveManualLog(){
+  const userId=document.getElementById('ml-vol').value;
+  const date=document.getElementById('ml-date').value;
+  const hours=parseFloat(document.getElementById('ml-hours').value);
+  const activity=document.getElementById('ml-activity').value.trim();
+  const notes=document.getElementById('ml-notes').value.trim();
+  if(!date)return alert('Please select a date.');
+  if(!hours||hours<=0)return alert('Please enter valid hours.');
+  const u=users.find(u=>u.id===userId);
+  await saveRequest({id:uid(),userId,userName:fullName(u||{firstName:'?',lastName:'?'}),date,hours,activity,notes,status:'approved',submittedAt:ts(),reviewedBy:fullName(currentUser),reviewedAt:ts()});
+  closeModal('manlog-modal');showToast('✓ Hours logged!');
+}
+
+// ── PROMOTE ──
+function openPromote(userId){
+  promoteUserId=userId;
+  const u=users.find(u=>u.id===userId);if(!u)return;
+  document.getElementById('promote-title').textContent='Change Role: '+fullName(u);
+  document.getElementById('promote-sub').textContent='Current role: '+(ROLE_LABELS[u.role]||u.role);
+  document.querySelectorAll('#promote-role-grid .role-opt').forEach(o=>o.classList.toggle('selected',o.dataset.role===u.role));
+  promoteSelectedRole=u.role;
+  openModal('promote-modal');
+}
+function selectPromoteRole(el){el.closest('.role-grid').querySelectorAll('.role-opt').forEach(o=>o.classList.remove('selected'));el.classList.add('selected');promoteSelectedRole=el.dataset.role;}
+async function savePromotion(){await updateUser(promoteUserId,{role:promoteSelectedRole});closeModal('promote-modal');showToast('✓ Role updated!');}
+
+// ── CLEAR ALL ──
+async function clearAll(){
+  if(!confirm('This will permanently delete ALL data from the cloud. Are you sure?'))return;
+  if(!confirm('Last chance — cannot be undone. Continue?'))return;
+  showLoading('Clearing…');
+  const [uSnap,rSnap]=await Promise.all([getDocs(collection(db,'users')),getDocs(collection(db,'requests'))]);
+  await Promise.all([...uSnap.docs.map(d=>deleteDoc(d.ref)),...rSnap.docs.map(d=>deleteDoc(d.ref))]);
+  localStorage.clear();hideLoading();location.reload();
+}
+</script>
+</body>
+</html>
